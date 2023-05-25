@@ -30,14 +30,23 @@ def cancer_encode(df):
 
 def cancer_features_select(df):
     df['Regional_Node_pos_%'] = 100 * df['Reginol Node Positive'] / df['Regional Node Examined']
-    df.drop(['Race', 'Marital Status', 'Survival Months', 'Status'], axis=1, inplace=True)
+    df.drop(['Race', 'Marital Status', 'Survival Months', 'Status','differentiate'], axis=1, inplace=True)
     return df
 
 
 cancer_encoder = FunctionTransformer(cancer_encode, validate=False)
 cancer_features_selector = FunctionTransformer(cancer_features_select, validate=False)
 
-
+def report(clf, X, y):
+    acc = accuracy_score(y_true=y,
+                         y_pred=clf.predict(X))
+    cm = pd.DataFrame(confusion_matrix(y_true=y,
+                                       y_pred=clf.predict(X)),
+                      index=clf.classes_,
+                      columns=clf.classes_)
+    rep = classification_report(y_true=y,
+                                y_pred=clf.predict(X))
+    return 'accuracy: {:.3f}\n\n{}\n\n{}'.format(acc, cm, rep)
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     pass
