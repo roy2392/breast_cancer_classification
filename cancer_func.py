@@ -30,7 +30,7 @@ def cancer_encode(df):
 
 def cancer_features_select(df):
     df['Regional_Node_pos_%'] = 100 * df['Reginol Node Positive'] / df['Regional Node Examined']
-    df.drop(['Race', 'Marital Status', 'Survival Months', 'Status'], axis=1, inplace=True)
+    df.drop(['Race', 'Marital Status', 'Survival Months', 'Status','differentiate'], axis=1, inplace=True)
     return df
 
 
