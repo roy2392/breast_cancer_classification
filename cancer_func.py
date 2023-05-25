@@ -37,7 +37,16 @@ def cancer_features_select(df):
 cancer_encoder = FunctionTransformer(cancer_encode, validate=False)
 cancer_features_selector = FunctionTransformer(cancer_features_select, validate=False)
 
-
+def report(clf, X, y):
+    acc = accuracy_score(y_true=y,
+                         y_pred=clf.predict(X))
+    cm = pd.DataFrame(confusion_matrix(y_true=y,
+                                       y_pred=clf.predict(X)),
+                      index=clf.classes_,
+                      columns=clf.classes_)
+    rep = classification_report(y_true=y,
+                                y_pred=clf.predict(X))
+    return 'accuracy: {:.3f}\n\n{}\n\n{}'.format(acc, cm, rep)
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     pass
