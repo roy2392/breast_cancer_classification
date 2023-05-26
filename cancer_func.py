@@ -6,8 +6,33 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_curve, roc_auc_score
 
-def cancer_encode(df):
+def cancer_encode_without_ms(df,y=None):
+    data_encoder = preprocessing.OrdinalEncoder(
+        categories=[['T1', 'T2', 'T3', 'T4'], ['N1', 'N2', 'N3'], ['IIA', 'IIB', 'IIIA', 'IIIB', 'IIIC'],
+                    ['1', '2', '3', ' anaplastic; Grade IV'], ['Regional', 'Distant'],
+                    ['Negative', 'Positive'], ['Negative', 'Positive'], ['Alive', 'Dead']])
+    df[['T Stage ', 'N Stage', '6th Stage', 'Grade', 'A Stage', 'Estrogen Status', 'Progesterone Status',
+        'Status']] = data_encoder.fit_transform(df[['T Stage ', 'N Stage', '6th Stage', 'Grade', 'A Stage',
+                                                    'Estrogen Status', 'Progesterone Status', 'Status']].values.reshape(
+        -8, 8))
+    df.Grade = df.Grade + 1
+
+    cat_var = ['Race']
+    one_hot = OneHotEncoder(sparse=False)  # , drop = 'first')
+    encoder_var_array = one_hot.fit_transform(df[cat_var])
+    encoder_name = one_hot.get_feature_names_out(cat_var)
+    encoder_vars_df = pd.DataFrame(encoder_var_array, columns=encoder_name)
+    df = pd.concat([df, encoder_vars_df], axis=1)
+
+    return df
+
+def cancer_encode(df,y=None):
     data_encoder = preprocessing.OrdinalEncoder(
         categories=[['T1', 'T2', 'T3', 'T4'], ['N1', 'N2', 'N3'], ['IIA', 'IIB', 'IIIA', 'IIIB', 'IIIC'],
                     ['1', '2', '3', ' anaplastic; Grade IV'], ['Regional', 'Distant'],
@@ -32,6 +57,7 @@ def cancer_features_select(df):
     df['Regional_Node_pos_%'] = 100 * df['Reginol Node Positive'] / df['Regional Node Examined']
     df.drop(['Race', 'Marital Status', 'Survival Months', 'Status','differentiate'], axis=1, inplace=True)
     return df
+
 
 
 cancer_encoder = FunctionTransformer(cancer_encode, validate=False)
