@@ -41,7 +41,7 @@ def cancer_encode(df,y=None):
         'Status']] = data_encoder.fit_transform(df[['T Stage ', 'N Stage', '6th Stage', 'Grade','A Stage',
                                                     'Estrogen Status', 'Progesterone Status', 'Status']].values.reshape(
         -8, 8))
-    # i cut 'A Stage' out
+
     df.Grade = df.Grade + 1
 
     cat_var = ['Race', 'Marital Status']
@@ -50,7 +50,8 @@ def cancer_encode(df,y=None):
     encoder_name = one_hot.get_feature_names_out(cat_var)
     encoder_vars_df = pd.DataFrame(encoder_var_array, columns=encoder_name)
     df = pd.concat([df, encoder_vars_df], axis=1)
-
+    df['Estrogen&Progesterone positive'] = df['Estrogen Status'] * df["Progesterone Status"]
+    df['Estrogen&Progesterone Negative'] = (1-df['Estrogen Status']) * (1-df["Progesterone Status"])
     return df
 
 
