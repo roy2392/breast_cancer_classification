@@ -13,6 +13,12 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_curve, roc_auc_score
 
 def cancer_encode_without_ms(df,y=None):
+    cat_var = ['Race','6th Stage']
+    one_hot = OneHotEncoder(sparse=False)  # , drop = 'first')
+    encoder_var_array = one_hot.fit_transform(df[cat_var])
+    encoder_name = one_hot.get_feature_names_out(cat_var)
+    encoder_vars_df = pd.DataFrame(encoder_var_array, columns=encoder_name)
+    df = pd.concat([df, encoder_vars_df], axis=1)
     data_encoder = preprocessing.OrdinalEncoder(
         categories=[['T1', 'T2', 'T3', 'T4'], ['N1', 'N2', 'N3'], ['IIA', 'IIB', 'IIIA', 'IIIB', 'IIIC'],
                     ['1', '2', '3', ' anaplastic; Grade IV'], ['Regional', 'Distant'],
@@ -23,16 +29,16 @@ def cancer_encode_without_ms(df,y=None):
         -8, 8))
     df.Grade = df.Grade + 1
 
-    cat_var = ['Race']
+    return df
+
+def cancer_encode(df,y=None):
+
+    cat_var = ['Race', 'Marital Status','6th Stage']
     one_hot = OneHotEncoder(sparse=False)  # , drop = 'first')
     encoder_var_array = one_hot.fit_transform(df[cat_var])
     encoder_name = one_hot.get_feature_names_out(cat_var)
     encoder_vars_df = pd.DataFrame(encoder_var_array, columns=encoder_name)
     df = pd.concat([df, encoder_vars_df], axis=1)
-
-    return df
-
-def cancer_encode(df,y=None):
     data_encoder = preprocessing.OrdinalEncoder(
         categories=[['T1', 'T2', 'T3', 'T4'], ['N1', 'N2', 'N3'], ['IIA', 'IIB', 'IIIA', 'IIIB', 'IIIC'],
                     ['1', '2', '3', ' anaplastic; Grade IV'], ['Regional', 'Distant'],
@@ -43,20 +49,13 @@ def cancer_encode(df,y=None):
         -8, 8))
 
     df.Grade = df.Grade + 1
-
-    cat_var = ['Race', 'Marital Status']
-    one_hot = OneHotEncoder(sparse=False)  # , drop = 'first')
-    encoder_var_array = one_hot.fit_transform(df[cat_var])
-    encoder_name = one_hot.get_feature_names_out(cat_var)
-    encoder_vars_df = pd.DataFrame(encoder_var_array, columns=encoder_name)
-    df = pd.concat([df, encoder_vars_df], axis=1)
-    df['Estrogen&Progesterone positive'] = df['Estrogen Status'] * df["Progesterone Status"]
-    df['Estrogen&Progesterone Negative'] = (1-df['Estrogen Status']) * (1-df["Progesterone Status"])
     return df
 
 
 def cancer_features_select(df):
     df['Regional_Node_pos_%'] = 100 * df['Reginol Node Positive'] / df['Regional Node Examined']
+    df['Estrogen&Progesterone positive'] = df['Estrogen Status'] * df["Progesterone Status"]
+    df['Estrogen&Progesterone Negative'] = (1-df['Estrogen Status']) * (1-df["Progesterone Status"])
     df.drop(['Race', 'Marital Status', 'Survival Months', 'Status','differentiate'], axis=1, inplace=True)
     return df
 
