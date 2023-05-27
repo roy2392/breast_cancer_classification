@@ -37,8 +37,8 @@ def cancer_encode(df,y=None):
         categories=[['T1', 'T2', 'T3', 'T4'], ['N1', 'N2', 'N3'], ['IIA', 'IIB', 'IIIA', 'IIIB', 'IIIC'],
                     ['1', '2', '3', ' anaplastic; Grade IV'], ['Regional', 'Distant'],
                     ['Negative', 'Positive'], ['Negative', 'Positive'], ['Alive', 'Dead']])
-    df[['T Stage ', 'N Stage', '6th Stage', 'Grade', 'Estrogen Status', 'Progesterone Status',
-        'Status']] = data_encoder.fit_transform(df[['T Stage ', 'N Stage', '6th Stage', 'Grade',
+    df[['T Stage ', 'N Stage', '6th Stage', 'Grade','A Stage', 'Estrogen Status', 'Progesterone Status',
+        'Status']] = data_encoder.fit_transform(df[['T Stage ', 'N Stage', '6th Stage', 'Grade','A Stage',
                                                     'Estrogen Status', 'Progesterone Status', 'Status']].values.reshape(
         -8, 8))
     # i cut 'A Stage' out
