@@ -11,6 +11,7 @@ from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_curve, roc_auc_score
+from numpy import mean
 
 def cancer_encode_without_ms(df,y=None):
     cat_var = ['Race','6th Stage']
@@ -74,7 +75,24 @@ def report(clf, X, y):
     rep = classification_report(y_true=y,
                                 y_pred=clf.predict(X))
     return 'accuracy: {:.3f}\n\n{}\n\n{}'.format(acc, cm, rep)
-# Press the green button in the gutter to run the script.
+def cross_validation_report(df,binary_target,cv_scores):
+    print('Mean f1:  %.3f' % mean(cv_scores['test_f1']))
+    print('Mean recall: %.3f' % mean(cv_scores['test_recall']))
+    print('Mean precision: %.3f' % mean(cv_scores['test_precision']))
+    rec = mean(cv_scores['test_recall'])
+    pre = mean(cv_scores['test_precision'])
+    total_p = df.groupby([binary_target])[binary_target].count()[1]
+    total_n = df.groupby([binary_target])[binary_target].count()[0]
+    TP = rec*total_p
+    FN = (1-rec)*total_p
+    FP = ((1-pre)/pre)*TP
+    TN = total_n - FP
+    print("cross_validation confusion matrix")
+    print("     0       1")
+    print("0 ",round(TN), "  ", round(FP))
+    print("1  ",round(FN), "     ", round(TP))
+
+
 if __name__ == '__main__':
     pass
 
