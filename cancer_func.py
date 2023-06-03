@@ -9,7 +9,7 @@ from sklearn.preprocessing import FunctionTransformer
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, make_scorer, f1_score, recall_score,precision_score
 from sklearn.metrics import roc_curve, roc_auc_score
 from numpy import mean
 
@@ -92,6 +92,32 @@ def cross_validation_report(df,binary_target,cv_scores):
     print("0 ",round(TN), "  ", round(FP))
     print("1  ",round(FN), "     ", round(TP))
 
+
+def f_recall(y_true, y_pred):
+    precision = f1_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    if recall >0.80:
+        answer = 0.8+ f1_score(y_true, y_pred)
+        return answer
+    else:
+        return recall
+def recall8_f1_scorer(y_true, y_pred):
+    f1 = f1_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    if recall >0.80:
+        answer = recall+ f1
+        return answer
+    else:
+        return recall
+
+def recall8_precision_scorer(y_true, y_pred):
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    if recall >0.80:
+        answer = recall+ precision
+        return answer
+    else:
+        return recall
 
 if __name__ == '__main__':
     pass
